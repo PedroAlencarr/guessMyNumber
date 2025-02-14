@@ -2,6 +2,23 @@
   "expo": {
     "name": "guessMyNumber",
     "slug": "guessMyNumber",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "ios": {
+            "backgroundColor": "#ffffff",
+            "image": "./assets/images/splash-icon.png",
+            "resizeMode": "cover"
+          },
+          "android": {
+            "backgroundColor": "#0c7cff",
+            "image": "./assets/images/splash-android-icon.png",
+            "imageWidth": 150
+          }
+        }
+      ]
+    ]
   }
 }

@@ -1,5 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import * as SplashScreen from "expo-splash-screen";
+import React, { useEffect, useState } from "react";
 import { ImageBackground, SafeAreaView, StyleSheet } from "react-native";
 
 import { useFonts } from "expo-font";
@@ -8,32 +9,41 @@ import GameScreen from "./src/screens/GameScreen";
 import StartGameScreen from "./src/screens/StartGameScreen";
 import Colors from "./src/utils/colors";
 
-// SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync();
+
 export default function App() {
   const [userNumber, setUserNumber] = useState();
   const [gameIsOver, setGameIsOver] = useState(true);
+  const [guessRounds, setGuessRounds] = useState(0);
 
-  // const [fontsLoaded] =
-  useFonts({
+  const [loaded, error] = useFonts({
     "open-sans": require("./src/utils/fonts/OpenSans-Regular.ttf"),
     "open-sans-bold": require("./src/utils/fonts/OpenSans-Bold.ttf"),
   });
 
-  // SplashScreen.setOptions({
-  //   duration: 1000,
-  //   fade: true,
-  // });
-  // if (fontsLoaded) {
-  //   SplashScreen.hide();
-  // }
+  useEffect(() => {
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
+
+  if (!loaded && !error) {
+    return null;
+  }
 
   function pickNumberHandler(pickNumber) {
     setUserNumber(pickNumber);
     setGameIsOver(false);
   }
 
-  function gameOverHandler() {
+  function gameOverHandler(numberOfRounds: number) {
     setGameIsOver(true);
+    setGuessRounds(numberOfRounds);
+  }
+
+  function startNewGameHandler() {
+    setUserNumber(null);
+    setGuessRounds(0);
   }
 
   let screen = <StartGameScreen onPickNumber={pickNumberHandler} />;
@@ -45,7 +55,13 @@ export default function App() {
   }
 
   if (gameIsOver && userNumber) {
-    screen = <GameOverScreen />;
+    screen = (
+      <GameOverScreen
+        roundsNumber={guessRounds}
+        userNumber={userNumber}
+        onStartNewGame={startNewGameHandler}
+      />
+    );
   }
 
   return (
